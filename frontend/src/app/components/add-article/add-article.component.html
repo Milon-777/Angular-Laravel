@@ -1,0 +1,31 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label for="name">Title:</label>
+  <input type="text" id="title" formControlName="title" />
+  <div
+    *ngIf="
+      form.get('title')?.hasError('required') && form.get('title')?.touched
+    "
+  >
+    Title is required!
+  </div>
+
+  <label for="body">Body:</label>
+  <input type="body" id="body" formControlName="body" />
+  <div
+    *ngIf="form.get('body')?.hasError('required') && form.get('body')?.touched"
+  >
+    Body is required!
+  </div>
+
+  <label for="author">Author:</label>
+  <input type="author" id="author" formControlName="author" />
+  <div
+    *ngIf="
+      form.get('author')?.hasError('required') && form.get('author')?.touched
+    "
+  >
+    Author is required!
+  </div>
+
+  <button type="submit" [disabled]="form.invalid">Add</button>
+</form>
