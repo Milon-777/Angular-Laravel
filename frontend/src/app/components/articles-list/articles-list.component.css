@@ -1,0 +1,18 @@
+.container {
+  margin: 40px auto 40px;
+  width: 1200px;
+}
+
+.container .table__title_container {
+  display: block;
+}
+
+.container .table__title_container .table__title {
+  margin: 46px 0;
+  text-align: center;
+  font-size: 36px;
+}
+
+.container .table__content {
+  padding: 0 100px;
+}

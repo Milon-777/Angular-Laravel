@@ -22,7 +22,13 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        return Article::create($request->all());
+        Article::create($request->all());
+
+        $response['status'] = 1;
+        $response['code'] = 200;
+        $response['message'] = 'Article was created successfully!';
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -31,12 +37,20 @@ class ArticleController extends Controller
     public function show(string $id)
     {
         if(Article::where('id', $id)->exists()){
-            return new ArticleResource(Article::find($id));
-            // return Article::find($id);
+
+            $response['status'] = 1;
+            $response['code'] = 200;
+            $response['message'] = 'Article was found successfully!';
+            $response['data'] = new ArticleResource(Article::find($id));
+    
+            return response()->json($response, 200);
         } else {
-            return response()->json([
-                "message" => "Article not found"
-            ], 404);
+            $response['status'] = 0;
+            $response['code'] = 404;
+            $response['message'] = 'Article was not found';
+            $response['data'] = null;
+    
+            return response()->json($response,404);
         }
     }
 
@@ -48,17 +62,24 @@ class ArticleController extends Controller
         if(Article::where('id', $id)->exists()){
             $article = Article::find($id);
             $article->title = $request->title;
-            $article->body = $request->body;
+            $article->content = $request->content;
             $article->author = $request->author;
 
             $article->save();
-            return response()->json([
-                "message" => "Article successfuly updated"
-            ], 200);
+
+            $response['status'] = 1;
+            $response['code'] = 200;
+            $response['message'] = 'Article was updated successfully!';
+            $response['data'] = new ArticleResource(Article::find($id));
+    
+            return response()->json($response, 200);
         } else {
-            return response()->json([
-                "message" => "Article not found"
-            ], 404);
+            $response['status'] = 0;
+            $response['code'] = 404;
+            $response['message'] = 'Article was not found!';
+            $response['data'] = null;
+    
+            return response()->json($response, 404);
         }
     }
 
@@ -71,13 +92,17 @@ class ArticleController extends Controller
             $article = Article::find($id);
             $article->delete();
 
-            return response()->json([
-                "message" => "Article successfuly deleted"
-            ], 202);
+            $response['status'] = 1;
+            $response['code'] = 200;
+            $response['message'] = 'Article was deleted successfully!';
+    
+            return response()->json($response, 200);
         } else {
-            return response()->json([
-                "message" => "Article not found"
-            ], 404);
+            $response['status'] = 0;
+            $response['code'] = 404;
+            $response['message'] = 'Article was not found';
+
+            return response()->json($response, 404);
         }
     }
 }

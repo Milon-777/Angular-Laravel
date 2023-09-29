@@ -1,28 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { IResponse } from 'src/app/models/response.model';
 import { ArticleService } from 'src/app/services/article.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
-  selector: 'app-add-article',
-  templateUrl: './add-article.component.html',
-  styleUrls: ['./add-article.component.css'],
+  selector: 'app-modal-popup',
+  templateUrl: './modal-popup.component.html',
+  styleUrls: ['./modal-popup.component.css'],
 })
-export class AddArticleComponent {
-  form: FormGroup;
+export class ModalPopupComponent {
+  form: FormGroup = new FormGroup({});
   userName: string | null = null;
 
   constructor(
     private builder: FormBuilder,
-    private articleService: ArticleService,
     private auth: AuthService,
-    private notification: NotificationService
+    private articleService: ArticleService,
+    private notification: NotificationService,
+    public dialogref: MatDialogRef<ModalPopupComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.userName = this.auth.getUserName();
     this.form = this.initializeForm();
+    this.loadCurrentArticle(this.data.articleId);
   }
 
   private initializeForm(): FormGroup {
@@ -43,17 +47,33 @@ export class AddArticleComponent {
           Validators.maxLength(10000),
         ])
       ),
-      author: [this.userName],
+      author: [this.userName, { disabled: true }],
+    });
+  }
+
+  private loadCurrentArticle(articleId: number) {
+    this.articleService.getOne(articleId).subscribe((res: IResponse) => {
+      if (res.status === 1) {
+        const { title, content, author } = res.data;
+        this.form.setValue({
+          title: title,
+          content: content,
+          author: author,
+        });
+      } else {
+        this.notification.errorMessage(res);
+      }
     });
   }
 
   onSubmit() {
     if (this.form.valid) {
       this.articleService
-        .create(this.form.value)
+        .update(this.form.value, this.data.articleId)
         .subscribe((res: IResponse) => {
           if (res.status === 1) {
             this.notification.successMessage(res);
+            this.dialogref.close();
           } else {
             this.notification.errorMessage(res);
           }

@@ -1,29 +1,44 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
+import { IArticle } from '../models/article';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ArticleService {
-  url: string = 'http://localhost:8000';
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-    }),
-  };
-
   constructor(private httpClient: HttpClient) {}
 
-  listArticles() {
-    return this.httpClient.get<any>(`${this.url}/api/articles`);
+  getAll(): Observable<IArticle[]> {
+    return this.httpClient.get<IArticle[]>(
+      `${environment.apiUrl}/api/articles`
+    );
   }
 
-  addArticle(article: any): Observable<any> {
+  getOne(articleId: number): Observable<IArticle> {
+    return this.httpClient.get<IArticle>(
+      `${environment.apiUrl}/api/articles/${articleId}`
+    );
+  }
+
+  create(article: any): Observable<any> {
     return this.httpClient.post<any>(
-      `${this.url}/api/articles`,
-      article,
-      this.httpOptions
+      `${environment.apiUrl}/api/articles`,
+      article
+    );
+  }
+
+  update(article: any, articleId: number) {
+    return this.httpClient.put<any>(
+      `${environment.apiUrl}/api/articles/${articleId}`,
+      article
+    );
+  }
+
+  delete(articleId: number): Observable<any> {
+    return this.httpClient.delete<any>(
+      `${environment.apiUrl}/api/articles/${articleId}`
     );
   }
 }

@@ -1,6 +1,6 @@
 .container {
   margin: 40px auto 40px;
-  width: 1400px;
+  width: 1200px;
 }
 
 .container .form__title_container {
@@ -33,9 +33,15 @@
   text-align: center;
 }
 
-.container .form__button_container .form__button_submit {
+.container .form__button_container .form__button {
   margin: 30px auto;
-  width: 240px;
+  min-width: 240px;
   height: 50px;
   font-size: 24px;
+}
+
+.container .form__button_container .form__span {
+  font-size: 20px;
+  display: block;
+  text-align: center;
 }
