@@ -61,8 +61,10 @@ class AuthController extends Controller
                 return response()->json($response, $response['code']);
             }
         } catch (\Throwable $th) {
+            $response['code'] = $th->getCode();
+            $response['message'] = $th->getMessage();
 
-            return response()->json($th, 500);
+            return response()->json($response, $response['code']);
         }      
 
         
@@ -90,9 +92,9 @@ class AuthController extends Controller
 
                 return response()->json($response,$response['code']);
             }
-        } catch(JWTException $e) {
-            $response['code'] = $th.getCode();
-            $response['message'] = $th.getMessage();
+        } catch(\Throwable $th) {
+            $response['code'] = $th->getCode();
+            $response['message'] = $th->getMessage();
 
             return response()->json($response, $response['code']);
         }      

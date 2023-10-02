@@ -39,9 +39,10 @@ class ArticleController extends Controller
             return response()->json($response, 200);
 
         } catch (\Throwable $th) {
-        $response['message'] = $th->getMessage();
+            $response['code'] = $th->getCode();
+            $response['message'] = $th->getMessage();
 
-        return response()->json($response, 500);
+        return response()->json($response,  $response['code']);
         }
         
     }
@@ -68,8 +69,8 @@ class ArticleController extends Controller
                 return response()->json($response, $response['code']);
             }
         } catch (\Throwable $th) {
-            $response['code'] = $th.getCode();
-            $response['message'] = $th.getMessage();
+            $response['code'] = $th->getCode();
+            $response['message'] = $th->getMessage();
 
             return response()->json($response, $response['code']);
         }
@@ -103,9 +104,10 @@ class ArticleController extends Controller
                 return response()->json($response, $response['code']);
             }
         } catch (\Throwable $th) {
+            $response['code'] = $th->getCode();
             $response['message'] = $th->getMessage();
 
-            return response()->json($response, 500);
+            return response()->json($response, $response['code']);
         }
         
     }
@@ -133,8 +135,8 @@ class ArticleController extends Controller
                 return response()->json($response,  $response['code']);
             }
         } catch (\Throwable $th) {
-            $response['code'] = $th.getCode();
-            $response['message'] = $th.getMessage();
+            $response['code'] = $th->getCode();
+            $response['message'] = $th->getMessage();
 
             return response()->json($response, $response['code']);
         }
