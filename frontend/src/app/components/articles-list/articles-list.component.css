@@ -13,6 +13,35 @@
   font-size: 36px;
 }
 
-.container .table__content {
+.container .table__container {
   padding: 0 100px;
+}
+
+.cell__title {
+  text-align: center;
+}
+
+.cell__content div {
+  max-width: 400px;
+  max-height: 4em;
+  overflow-y: scroll;
+  word-wrap: break-word;
+  padding: 8px;
+}
+
+.mat-mdc-cell {
+  word-wrap: break-word;
+}
+
+.cell__content div::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cell__content div::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
+}
+
+.column {
+  text-align: center;
 }
