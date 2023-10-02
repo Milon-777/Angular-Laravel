@@ -1,10 +1,12 @@
 ## Необхідні інструменти
 
--   Для бази даних я використовував XAMPP Control Panel, в якому є Apachi server та MariaDB.
+-   Для бази даних я використовував XAMPP Control Panel (3.3.0), в якому є Apache (2.4.56) та MariaDB (10.4.28).
 
--   PHP
+-   PHP (8.1.9)
 
--   Angular
+-   Composer (2.6.3)
+
+-   node (18.16.1)
 
 ## Інструкція для запуску додатка
 

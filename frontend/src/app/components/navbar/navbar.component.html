@@ -18,7 +18,7 @@
       Add new article
     </button>
     <button
-      *ngIf="!isAuthenticated"
+      *ngIf="!isUserAuthorized"
       class="navbar__button"
       mat-button
       routerLinkActive="active"
@@ -27,7 +27,7 @@
       Login
     </button>
     <button
-      *ngIf="isAuthenticated"
+      *ngIf="isUserAuthorized"
       [mat-menu-trigger-for]="logout"
       class="navbar__button"
       mat-button

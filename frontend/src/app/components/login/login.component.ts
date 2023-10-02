@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { IResponse } from 'src/app/models/response.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { IResponse } from 'src/app/models/response.model';
+import { IReject } from 'src/app/models/reject.model';
 
 @Component({
   selector: 'app-login',
@@ -54,22 +54,24 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      this.authService.login(this.form.value).subscribe((res: IResponse) => {
-        if (res.status === 1) {
-          sessionStorage.setItem('token', res.data.token);
-          this.authService.isAuthorized.next(true);
-          this.notification.successMessage(res);
+      this.authService.login(this.form.value).subscribe({
+        next: (res: IResponse) => {
+          if (res.data && 'token' in res.data) {
+            this.authService.setToken(res.data.token);
+            this.notification.successMessage(res.message, res.code);
 
-          this.clearForm();
-          this.router.navigate(['']);
-        } else {
-          this.notification.errorMessage(res);
-          this.authService.isAuthorized.next(false);
-        }
+            this.clearForm();
+            this.router.navigate(['']);
+          }
+        },
+        error: (rej: IReject) => {
+          this.authService.deleteToken();
+          this.notification.errorMessage(rej.error.message, rej.status);
+        },
       });
     } else {
       this.notification.invalidFieldsMessage();
-      this.authService.isAuthorized.next(false);
+      this.authService.deleteToken();
     }
   }
 

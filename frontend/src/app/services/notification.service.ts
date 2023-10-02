@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { IResponse } from '../models/response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,16 +7,16 @@ import { IResponse } from '../models/response.model';
 export class NotificationService {
   constructor(private toastr: ToastrService) {}
 
-  successMessage(response: IResponse) {
-    this.toastr.success(response.message, `${response.code}`, {
+  successMessage(responseMessage: string, responseCode: number) {
+    this.toastr.success(responseMessage, `${responseCode}`, {
       timeOut: 3000,
       progressBar: true,
       closeButton: true,
     });
   }
 
-  errorMessage(response: IResponse) {
-    this.toastr.error(response.message, `${response.code}`, {
+  errorMessage(rejectMessage: string, rejectCode: number) {
+    this.toastr.error(rejectMessage, `${rejectCode}`, {
       timeOut: 3000,
       progressBar: true,
       closeButton: true,
@@ -41,7 +40,7 @@ export class NotificationService {
   }
 
   logoutSuccessMessage() {
-    this.toastr.error('Logged out successfully', '200', {
+    this.toastr.success('Logged out successfully', '200', {
       timeOut: 3000,
       progressBar: true,
       closeButton: true,

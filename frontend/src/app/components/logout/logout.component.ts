@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { NotificationService } from 'src/app/services/notification.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { IReject } from 'src/app/models/reject.model';
+import { IResponse } from 'src/app/models/response.model';
 
 @Component({
   selector: 'app-logout',
@@ -11,14 +12,21 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class LogoutComponent {
   constructor(
-    private auth: AuthService,
+    private authService: AuthService,
     private notification: NotificationService,
     private router: Router
   ) {}
 
   logout() {
-    this.auth.logout();
-    this.router.navigate(['']);
-    this.notification.logoutSuccessMessage();
+    this.authService.logout().subscribe({
+      next: (res: IResponse) => {
+        this.authService.deleteToken();
+        this.notification.successMessage(res.message, res.code);
+        this.router.navigate(['']);
+      },
+      error: (rej: IReject) => {
+        this.notification.errorMessage(rej.error.message, rej.status);
+      },
+    });
   }
 }

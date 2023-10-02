@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import { IReject } from 'src/app/models/reject.model';
 import { IResponse } from 'src/app/models/response.model';
 import { ArticleService } from 'src/app/services/article.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -11,18 +11,30 @@ import { NotificationService } from 'src/app/services/notification.service';
   templateUrl: './add-article.component.html',
   styleUrls: ['./add-article.component.css'],
 })
-export class AddArticleComponent {
-  form: FormGroup;
+export class AddArticleComponent implements OnInit {
+  form: any;
   userName: string | null = null;
 
   constructor(
     private builder: FormBuilder,
     private articleService: ArticleService,
-    private auth: AuthService,
+    private authService: AuthService,
     private notification: NotificationService
   ) {
-    this.userName = this.auth.getUserName();
     this.form = this.initializeForm();
+  }
+
+  ngOnInit(): void {
+    this.authService.isUserAuthorized().subscribe((isAuthorized) => {
+      if (isAuthorized) {
+        this.authService.getUserName().subscribe((res) => {
+          if (res.data && 'name' in res.data) {
+            this.userName = res.data.name;
+            this.form.get('author')?.setValue(this.userName);
+          }
+        });
+      }
+    });
   }
 
   private initializeForm(): FormGroup {
@@ -49,15 +61,14 @@ export class AddArticleComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      this.articleService
-        .create(this.form.value)
-        .subscribe((res: IResponse) => {
-          if (res.status === 1) {
-            this.notification.successMessage(res);
-          } else {
-            this.notification.errorMessage(res);
-          }
-        });
+      this.articleService.create(this.form.value).subscribe({
+        next: (res: IResponse) => {
+          this.notification.successMessage(res.message, res.code);
+        },
+        error: (rej: IReject) => {
+          this.notification.errorMessage(rej.error.message, rej.status);
+        },
+      });
       this.clearForm();
     } else {
       this.notification.invalidFieldsMessage();

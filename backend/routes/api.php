@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Article;
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 use App\Http\Resources\ArticleResource;
 
 /*
@@ -18,32 +18,18 @@ use App\Http\Resources\ArticleResource;
 |
 */
 
-// Route::get('/articles', function () {
-//     // return ArticleResource::collection(Article::all());
-// });
-
-// Route::get('/article/{id}', function ($id) {
-//     return new ArticleResource(Article::findOrFail($id));
-// });
 
 Route::get('/articles', [ArticleController::class, 'index']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);     
+Route::post('/refresh', [AuthController::class, 'refresh']);  
 
-Route::get('/articles/{id}', [ArticleController::class, 'show']);
-
-Route::post('/articles', [ArticleController::class, 'store']);
-
-Route::put('/articles/{id}', [ArticleController::class, 'update']);
-
-Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+    Route::get('/articles/{id}', [ArticleController::class, 'show']);      
+    Route::post('/articles', [ArticleController::class, 'store']);
+    Route::put('/articles/{id}', [ArticleController::class, 'update']); 
+    Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);   
+    Route::post('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);  
 });
 
-Route::group(['middleware'=>'auth:sanctum'], function () {
-    // Route::get('/users', 'GetController')
-});
-
-// Route::get('/get', 'GetController');
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);

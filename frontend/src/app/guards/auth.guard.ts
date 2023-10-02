@@ -4,7 +4,6 @@ import {
   CanActivateFn,
   RouterStateSnapshot,
 } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { map } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
@@ -16,7 +15,7 @@ export const authGuard: CanActivateFn = (
   const auth = inject(AuthService);
   const notification = inject(NotificationService);
 
-  return auth.isUserAuthenticated().pipe(
+  return auth.isUserAuthorized().pipe(
     map((isAuthenticated) => {
       if (isAuthenticated) {
         return true;

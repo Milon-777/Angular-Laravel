@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import jwt_decode from 'jwt-decode';
-import { IToken } from 'src/app/models/token.model';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -10,31 +8,21 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent {
-  isAuthenticated: boolean = false;
+  isUserAuthorized: boolean = false;
   userName: string = '';
-  decodedToken: IToken = {
-    exp: 0,
-    iat: 0,
-    iss: '',
-    jti: '',
-    name: '',
-    nbf: 0,
-    prv: '',
-    sub: '',
-  };
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.authService.isUserAuthenticated().subscribe((isAuthenticated) => {
-      this.isAuthenticated = isAuthenticated;
-
-      if (isAuthenticated) {
-        const token = sessionStorage.getItem('token');
-        if (token) {
-          this.decodedToken = jwt_decode(token);
-          this.userName = this.decodedToken.name;
-        }
+    this.authService.isUserAuthorized().subscribe((isUserAuthorized) => {
+      this.isUserAuthorized = isUserAuthorized;
+      const storedToken = sessionStorage.getItem('token');
+      if (this.isUserAuthorized && storedToken !== null) {
+        this.authService.getUserName().subscribe((res) => {
+          if (res.data && 'name' in res.data) {
+            this.userName = res.data.name;
+          }
+        });
       }
     });
   }

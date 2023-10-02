@@ -1,11 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment';
-import { IRegistration } from '../models/registration.model';
-import { ILogin } from '../models/login.model';
 import { BehaviorSubject, Observable } from 'rxjs';
-import jwt_decode from 'jwt-decode';
-import { IToken } from '../models/token.model';
+import { environment } from '../environments/environment';
+import { ILogin } from '../models/login.model';
+import { IRegistration } from '../models/registration.model';
 import { IResponse } from '../models/response.model';
 
 @Injectable({
@@ -13,10 +11,12 @@ import { IResponse } from '../models/response.model';
 })
 export class AuthService {
   isAuthorized = new BehaviorSubject<boolean>(false);
+  httpOptions = {};
 
   constructor(private http: HttpClient) {
-    if (sessionStorage.getItem('token')) {
-      this.isAuthorized.next(true);
+    const storedToken = sessionStorage.getItem('token');
+    if (storedToken !== null) {
+      this.setToken(storedToken);
     }
   }
 
@@ -31,21 +31,38 @@ export class AuthService {
     return this.http.post<IResponse>(`${environment.apiUrl}/api/login`, data);
   }
 
-  logout() {
-    sessionStorage.removeItem('token');
-    this.isAuthorized.next(false);
+  logout(): Observable<IResponse> {
+    return this.http.post<IResponse>(
+      `${environment.apiUrl}/api/logout`,
+      null,
+      this.httpOptions
+    );
   }
 
-  isUserAuthenticated(): Observable<boolean> {
+  setToken(token: string) {
+    sessionStorage.setItem('token', token);
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      }),
+    };
+    this.isAuthorized.next(true);
+  }
+
+  deleteToken() {
+    this.isAuthorized.next(false);
+    sessionStorage.removeItem('token');
+  }
+
+  isUserAuthorized(): Observable<boolean> {
     return this.isAuthorized;
   }
 
-  getUserName(): string | null {
-    if (this.isAuthorized) {
-      const decodedToken: IToken = jwt_decode(sessionStorage.getItem('token')!);
-      return decodedToken.name;
-    } else {
-      return null;
-    }
+  getUserName(): Observable<IResponse> {
+    return this.http.post<IResponse>(
+      `${environment.apiUrl}/api/me`,
+      null,
+      this.httpOptions
+    );
   }
 }
