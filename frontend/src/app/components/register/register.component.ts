@@ -66,7 +66,6 @@ export class RegisterComponent {
           }
         },
         error: (rej: IReject) => {
-          console.log(rej);
           this.notification.errorMessage(rej.error.message, rej.status);
           this.authService.deleteToken();
         },
