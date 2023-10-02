@@ -10,7 +10,28 @@
 
 ## Інструкція для запуску додатка
 
--   Для запуска бекенда треба перейти в папку backend та запустити бекенд ввівши команду:
-    `php artisan serve`
--   Для запуска фронтенда треба перейти в папку frontend та запустити фронтенд ввівши команду:
-    `ng serve`
+-   Скопіюйте або завантажте цей репозиторій: `git clone https://github.com/Milon-777/Angular-Laravel`
+
+-   Завантажте XAMPP або інший застосунок якій містить Apache та MariaDB
+
+-   Завантажте Composer (якщо нема) та оберіть **php.exe** з _XAMPP/php/_ при установці Composer
+
+-   Включіть розширення **extension=zip** в _XAMPP/php/php.ini_
+
+-   Перезавантажте VS Code або інше середовище, щоб підтягнути зміни.
+
+-   Запустити в XAMPP Apache та MySQL
+
+-   Для запуску бекенда треба зайти в папку backend та прописати наступні команди в консолі:
+
+    1. `composer install`
+    2. `composer update`
+    3. `cp .env.example .env`
+    4. `php artisan key:generate`
+    5. `php artisan migrate`
+    6. `php artisan serve`
+
+-   Для запуску фронтенду треба зайти в папку frontend та прописати наступні команди в консолі:
+    1. `npm i`
+    2. `npm i -g @angular/cli`
+    3. `ng serve`
